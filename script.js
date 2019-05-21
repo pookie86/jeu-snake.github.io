@@ -1,6 +1,5 @@
-window.onload = function()      //se lance lorsque fenêtre s'affiche
+window.onload = () =>    //se lance lorsque fenêtre s'affiche
 { 
- 
     const canvasWidth = 900;      //largeur
     const canvasHeight = 600;     // hauteur
     const blockSize = 25;     //taile des blocks
@@ -16,9 +15,7 @@ window.onload = function()      //se lance lorsque fenêtre s'affiche
     let score;
     let timeout;
     
-    init();
-
-    function init()
+    const init = () =>
     {
         canvas.width = canvasWidth;     //largeur
         canvas.height = canvasHeight;       //hauteur
@@ -31,7 +28,7 @@ window.onload = function()      //se lance lorsque fenêtre s'affiche
         launch();    
     }
     
-    function launch()      //reinitialise le jeu à 0, on va lancer le jeu
+    const launch = () =>      //reinitialise le jeu à 0, on va lancer le jeu
     {
         snakee = new Snake([[6,4], [5,4], [4,4], [3,4], [2,4]], "right");       //fonction constructor crée le body du serpent
         applee = new Apple([10,10]);        //fonction constructor crée la pomme
@@ -41,7 +38,7 @@ window.onload = function()      //se lance lorsque fenêtre s'affiche
         refreshCanvas();        //appelle la fonction à la fin de la fonction init
     } 
 
-    function refreshCanvas()        //pour faire bouger le rectangle rouge
+    const refreshCanvas = () =>        //pour faire bouger le rectangle rouge
     {        
         snakee.advance();       //fait avancer le serpent
         if (snakee.checkCollision()) 
@@ -73,12 +70,12 @@ window.onload = function()      //se lance lorsque fenêtre s'affiche
         }
     }
 
-    function speedUp() 
+    const speedUp = () =>
     {
         delay /= 2;     //divise le délai par 2 (nouvelle assignation de delay)   
     }
 
-    function gameOver()     //affiche le texte
+    const gameOver = () =>     //affiche le texte
     {
         ctx.save();
         ctx.font = "bold 60px Urban Jungle"     //change la police
@@ -96,7 +93,7 @@ window.onload = function()      //se lance lorsque fenêtre s'affiche
         ctx.restore();
     }
 
-    function drawScore()        //affiche le score
+    const drawScore = () =>        //affiche le score
     {
         ctx.save();
         ctx.font = "bold 80px sans-serif"       //change la police
@@ -107,7 +104,7 @@ window.onload = function()      //se lance lorsque fenêtre s'affiche
         ctx.restore();
     }
 
-    function drawBlock(ctx, position)       //dessine un block prend contexte et position d'un bloc
+    const drawBlock = (ctx, position) =>       //dessine un block prend contexte et position d'un bloc
     {
         const x = position[0] * blockSize;        //position à l'axe horizontal
         const y = position[1] * blockSize;        //position à l'axe vertical
@@ -252,10 +249,10 @@ window.onload = function()      //se lance lorsque fenêtre s'affiche
             }
         }
         return isOnSnake;
-    };
-}
+        };
+    }
 
-document.onkeydown = function handleKeyDown(e)    // change position en fonction de ce que l'utilisateur à taper sur le clavier 
+document.onkeydown = (e) =>   // change position en fonction de ce que l'utilisateur à taper sur le clavier 
 {                                                  //on lui donne un nom à la fonction et on va lui donner l'evenement cad que chaque evenement le transmettre à la fonction
     const key = e.keyCode;    //donne le code de la touche qui a été appuyé
     let newDirection;
@@ -281,6 +278,8 @@ document.onkeydown = function handleKeyDown(e)    // change position en fonction
     }
     snakee.setDirection(newDirection);      //appelle la nouvelle direction
 };
+
+init();
     
 }
 
