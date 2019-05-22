@@ -111,12 +111,16 @@ window.onload = () =>    //se lance lorsque fenêtre s'affiche
         ctx.fillRect(x, y, blockSize, blockSize);       //remplissage du rectangle
     }
 
-    function Snake(body, direction)     //prototype du serpent
+    class Snake
     {
-        this.body = body;       //corps du serpent égal body fournit à la fonction constructor
-        this.direction = direction;
-        this.ateApple = false;
-        this.draw = function()      //méthode dessinant le body du serpent
+        constructor(body, direction)        //prototype du serpent => constructeur
+        {
+            this.body = body;       //corps du serpent égal body fournit à la fonction constructor
+            this.direction = direction;
+            this.ateApple = false;
+        }
+        
+        draw()      //méthode dessinant le body du serpent
         {
             ctx.save();         //sauvegarde du contexte comme il était avant
             ctx.fillStyle = "#6f522a";      //Couleur du serpent
@@ -127,7 +131,7 @@ window.onload = () =>    //se lance lorsque fenêtre s'affiche
             ctx.restore();      //permet de garder le contexte comme il était avant
         
         };   
-        this.advance = function()       //fait avancer le serpent
+        advance()       //fait avancer le serpent
         {
             const nextPosition = this.body[0].slice();        //nouvelle position de la tête, on copie l'element [6,4] avec slice
             switch(this.direction)      //switch qui va analyser notre direction
@@ -154,7 +158,7 @@ window.onload = () =>    //se lance lorsque fenêtre s'affiche
             else
                 this.ateApple = false;      //rajoute juste un block une fois la pomme mangé
         };
-        this.setDirection = function(newDirection)      //passe la direction au serpent
+        setDirection(newDirection)      //passe la direction au serpent
         {
             let allowedDirections;      //les directions permises
             switch(this.direction)
@@ -175,7 +179,7 @@ window.onload = () =>    //se lance lorsque fenêtre s'affiche
             this.direction = newDirection; 
         }                             
         };
-        this.checkCollision = function()        //vérifie si serpent sort du contexte ou passe sur son propre corps
+        checkCollision()        //vérifie si serpent sort du contexte ou passe sur son propre corps
     {
             let wallCollision = false;      //initialise à faux
             let snakeCollision = false;     //initialise à faux
@@ -206,20 +210,24 @@ window.onload = () =>    //se lance lorsque fenêtre s'affiche
         return snakeCollision || wallCollision;     //retourne le resultat
     
         };
-        this.isEatingApple = function(appleToEat)       //savoir si le serpent mange la pomme
+        isEatingApple(appleToEat)       //savoir si le serpent mange la pomme
         {
             const head = this.body[0];        //verifie si la tete egale au corps à la place 0
             if(head[0] === appleToEat.position[0] && head[1] === appleToEat.position[1])        //x et y du head egale a appletoeat  // verifie si la tete est egale a position de la pomme
                 return true;        //on peut ne pas mettre les crochets si qu'une seule ligne
             else
                 return false;
-        }
+        }; 
     }
 
-    function Apple(position)        //prototype de la pomme
-    {
-        this.position = position;
-        this.draw = function()      //méthode pour dessiner 
+    class Apple       
+    {   
+        constructor(position)       //prototype de la pomme => constructeur
+        {
+            this.position = position;
+        }
+
+        draw()      //méthode pour dessiner 
         {
             const radius = blockSize/2;       // r = diametre/2 definition du rayon
             const x = this.position[0]*blockSize + radius;        //position du rond par rapport à l'horizontal
@@ -231,13 +239,13 @@ window.onload = () =>    //se lance lorsque fenêtre s'affiche
             ctx.fill();     //remplis le cercle avec de couleur
             ctx.restore();      //se souvenir des anciens paramètres dans le contexte
         };
-        this.setNewPosition = function()        //pour faire bouger la pomme aléatoirement
+        setNewPosition()        //pour faire bouger la pomme aléatoirement
         {
             const newX =  Math.round(Math.random() * (widthInBlocks - 1));        //multiplie par nombre de blocks dans la largeur -1 chiffre entre 0 & 29 avec chiffres entier
             const newY =  Math.round(Math.random() * (heightInBlocks - 1));
         this.position = [newX, newY];
         };
-        this.isOnSnake = function(snakeToCheck)     //vérifie sur quel serpent se trouve la pomme
+        isOnSnake(snakeToCheck)     //vérifie sur quel serpent se trouve la pomme
         { 
             let isOnSnake = false;      //constante qu'on retourne à la fin (non c'est faux je ne suis pas sur le serpent)
 
@@ -249,7 +257,7 @@ window.onload = () =>    //se lance lorsque fenêtre s'affiche
             }
         }
         return isOnSnake;
-        };
+        };   
     }
 
 document.onkeydown = (e) =>   // change position en fonction de ce que l'utilisateur à taper sur le clavier 
