@@ -1,136 +1,16 @@
 window.onload = () =>    //se lance lorsque fenêtre s'affiche
 { 
-    const canvasWidth = 900;      //largeur
-    const canvasHeight = 600;     // hauteur
-    const blockSize = 25;     //taile des blocks
-    const canvas = document.createElement('canvas');      //créer l'element html5 permettant de dessiner sur une page html
-    const ctx = canvas.getContext('2d');      //dessine dans le canvas dans le contexte & attrape le contexte pour le mettre dans un nom
-    const widthInBlocks = canvasWidth/blockSize;      //divise la largeur en terme de blocks donc 30 blocks
-    const heightInBlocks = canvasHeight/blockSize;        //divise la hauteur en terme de blocks donc 20 blocks
-    const centreX = canvasWidth/2;
-    const centreY = canvasHeight/2;
-    let delay;        //temps en ms, let car nouvelle assignation plus tard
-    let snakee;     //let car nouvelle assignation
-    let applee;
-    let score;
-    let timeout;
     
-    const init = () =>
-    {
-        canvas.width = canvasWidth;     //largeur
-        canvas.height = canvasHeight;       //hauteur
-        canvas.style.border = "30px solid #382a15";     //style du canvas
-        canvas.style.margin = "50px auto";
-        canvas.style.display = "block";
-        canvas.style.background = "url(https://static.vecteezy.com/system/resources/previews/000/147/109/non_2x/palmetto-leaves-background-vector.jpg) no-repeat center ";
-        canvas.style.backgroundColor = "#c7914b";
-        document.body.appendChild(canvas);      //permet d'accrocher ce tag au body, on l'ajoute au HTML avec cette ligne
-        launch();    
-    }
-    
-    const launch = () =>      //reinitialise le jeu à 0, on va lancer le jeu
-    {
-        snakee = new Snake([[6,4], [5,4], [4,4], [3,4], [2,4]], "right");       //fonction constructor crée le body du serpent
-        applee = new Apple([10,10]);        //fonction constructor crée la pomme
-        score = 0;
-        clearTimeout(timeout);
-        delay = 100;
-        refreshCanvas();        //appelle la fonction à la fin de la fonction init
-    } 
-
-    const refreshCanvas = () =>        //pour faire bouger le rectangle rouge
-    {        
-        snakee.advance();       //fait avancer le serpent
-        if (snakee.checkCollision()) 
-        {
-            gameOver();    
-        }
-        else
-        {
-            if(snakee.isEatingApple(applee))
-        {
-            score++;        //ajoute 1 point quand le serpent a mangé une pomme
-            snakee.ateApple = true;
-            do
-            {
-                applee.setNewPosition();        //on donne une nouvelle position a la pomme
-            }
-            while(applee.isOnSnake(snakee))     //on vérifie si position est sur le serpent snakee tant que la nouvelle position sera sur le snakee
-            
-            if(score % 5 == 0)
-            {
-                speedUp();      //si score à 5 alors execute la fonction speedup = franchi pallier de 5 points
-            }
-        }
-        ctx.clearRect(0,0,canvasWidth, canvasHeight);       //efface le contenu du canvas
-        drawScore();        //exécute la fonction
-        snakee.draw();      //dessine le serpent
-        applee.draw();      //dessine la pomme
-        timeout = setTimeout(refreshCanvas, delay);     //exécute la fonction à chaque fois que delay de 100ms soit passé pour dessiner plusieurs fois le canvas
-        }
-    }
-
-    const speedUp = () =>
-    {
-        delay /= 2;     //divise le délai par 2 (nouvelle assignation de delay)   
-    }
-
-    const gameOver = () =>     //affiche le texte
-    {
-        ctx.save();
-        ctx.font = "bold 60px Urban Jungle"     //change la police
-        ctx.fillStyle = "#1d741b";      //change la couleur de la police
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.strokeStyle = "#8fa01f";
-        ctx.lineWidth = 5;
-        ctx.strokeText("GAME OVER", centreX, centreY - 85);
-        ctx.fillText("GAME OVER", centreX, centreY - 85);
-        ctx.font = "bold 20px sans-serif"       //change la police
-        ctx.strokeText("Appuie sur la touche Espace pour rejouer", centreX, centreY + 90);
-        ctx.fillText("Appuie sur la touche Espace pour rejouer", centreX, centreY + 90);
-
-        ctx.restore();
-    }
-
-    const drawScore = () =>        //affiche le score
-    {
-        ctx.save();
-        ctx.font = "bold 80px sans-serif"       //change la police
-        ctx.fillStyle = "#e8be7a";      //change la couleur de la police
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("Score" + " : " + score.toString(), centreX, centreY);     // Centre le text au milieu
-        ctx.restore();
-    }
-
-    const drawBlock = (ctx, position) =>       //dessine un block prend contexte et position d'un bloc
-    {
-        const x = position[0] * blockSize;        //position à l'axe horizontal
-        const y = position[1] * blockSize;        //position à l'axe vertical
-        ctx.fillRect(x, y, blockSize, blockSize);       //remplissage du rectangle
-    }
 
     class Snake
     {
-        constructor(body, direction)        //prototype du serpent => constructeur
+        constructor(direction, ...body)        //prototype du serpent => constructeur
         {
             this.body = body;       //corps du serpent égal body fournit à la fonction constructor
             this.direction = direction;
             this.ateApple = false;
         }
         
-        draw()      //méthode dessinant le body du serpent
-        {
-            ctx.save();         //sauvegarde du contexte comme il était avant
-            ctx.fillStyle = "#6f522a";      //Couleur du serpent
-            for (let i = 0; i < this.body.length; i++)       //boucle permettant de passer sur chacun des membres du serpent
-            {
-                drawBlock(ctx, this.body[i]);       //dessine un block on donne le ctx et la position du block à dessiner
-            }
-            ctx.restore();      //permet de garder le contexte comme il était avant
-        
-        };   
         advance()       //fait avancer le serpent
         {
             const nextPosition = this.body[0].slice();        //nouvelle position de la tête, on copie l'element [6,4] avec slice
@@ -179,14 +59,17 @@ window.onload = () =>    //se lance lorsque fenêtre s'affiche
             this.direction = newDirection; 
         }                             
         };
-        checkCollision()        //vérifie si serpent sort du contexte ou passe sur son propre corps
+        checkCollision(widthInBlocks, heightInBlocks)        //vérifie si serpent sort du contexte ou passe sur son propre corps
     {
             let wallCollision = false;      //initialise à faux
             let snakeCollision = false;     //initialise à faux
-            const head = this.body[0];        //verifie la tete du serpent
-            const rest = this.body.slice(1);      //reste du corps du serpent mis de côté, est un array
-            const snakeX = head[0];       // x de la tete
-            const snakeY = head[1];       // y de la tete
+            
+            const [head, ...rest] = this.body;
+            //const head = this.body[0];        //verifie la tete du serpent
+            //const rest = this.body.slice(1);      //reste du corps du serpent mis de côté, est un array
+            const [snakeX,snakeY] = head;
+            //const snakeX = head[0];       // x de la tete
+            //const snakeY = head[1];       // y de la tete
             const minX = 0;       //initialise à 0
             const minY = 0;       //initialise à 0
             const maxX = widthInBlocks -1;        //nombre de blocks -1
@@ -199,9 +82,9 @@ window.onload = () =>    //se lance lorsque fenêtre s'affiche
             wallCollision = true;       //il y a collision de mur
         }
     
-        for(let i = 0; i < rest.length ; i++)       //verifie si serpent passe sur son propre corps
+        for(let block of rest)       //verifie si serpent passe sur son propre corps
         {
-            if (snakeX === rest[i][0] && snakeY === rest[i][1] ) 
+            if (snakeX === block[0] && snakeY === block[1] ) 
             {
             snakeCollision = true;      //il y a collision de serpent
             }
@@ -222,36 +105,24 @@ window.onload = () =>    //se lance lorsque fenêtre s'affiche
 
     class Apple       
     {   
-        constructor(position)       //prototype de la pomme => constructeur
+        constructor(position = [10,10])       //prototype de la pomme => constructeur
         {
             this.position = position;
         }
 
-        draw()      //méthode pour dessiner 
-        {
-            const radius = blockSize/2;       // r = diametre/2 definition du rayon
-            const x = this.position[0]*blockSize + radius;        //position du rond par rapport à l'horizontal
-            const y = this.position[1]*blockSize + radius;        //position du rond par rapport au vertical
-            ctx.save();
-            ctx.fillStyle = "#970c10";      //couleur de la pomme
-            ctx.beginPath();        // il s'agit d'un rond
-            ctx.arc(x,y, radius, 0, Math.PI*2, true);       //dessine le cercle
-            ctx.fill();     //remplis le cercle avec de couleur
-            ctx.restore();      //se souvenir des anciens paramètres dans le contexte
-        };
-        setNewPosition()        //pour faire bouger la pomme aléatoirement
+        setNewPosition(widthInBlocks, heightInBlocks)        //pour faire bouger la pomme aléatoirement
         {
             const newX =  Math.round(Math.random() * (widthInBlocks - 1));        //multiplie par nombre de blocks dans la largeur -1 chiffre entre 0 & 29 avec chiffres entier
             const newY =  Math.round(Math.random() * (heightInBlocks - 1));
-        this.position = [newX, newY];
+            this.position = [newX, newY];
         };
         isOnSnake(snakeToCheck)     //vérifie sur quel serpent se trouve la pomme
         { 
             let isOnSnake = false;      //constante qu'on retourne à la fin (non c'est faux je ne suis pas sur le serpent)
 
-        for(let i = 0 ; i < snakeToCheck.body.length; i++)      //on va vérifier si pomme est sur chacun des blocks du serpent
+        for(let block of snakeToCheck.body)      //on va vérifier si pomme est sur chacun des blocks du serpent
         {
-            if(this.position[0] === snakeToCheck.body[i][0] && this.position[1 === snakeToCheck.body[i][1]]) // X de notre pomme est égale à block de la place i et verifie son X
+            if(this.position[0] === block[0] && this.position[1 === block[1]]) // X de notre pomme est égale à block de la place i et verifie son X
             {
                 isOnSnake = true;
             }
@@ -260,7 +131,154 @@ window.onload = () =>    //se lance lorsque fenêtre s'affiche
         };   
     }
 
-document.onkeydown = (e) =>   // change position en fonction de ce que l'utilisateur à taper sur le clavier 
+    class Drawing 
+    {
+        static gameOver(ctx, centreX, centreY)    //affiche le texte => methode static
+        {
+            ctx.save();
+            ctx.font = "bold 60px Urban Jungle"     //change la police
+            ctx.fillStyle = "#1d741b";      //change la couleur de la police
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.strokeStyle = "#8fa01f";
+            ctx.lineWidth = 5;
+            ctx.strokeText("GAME OVER", centreX, centreY - 85);
+            ctx.fillText("GAME OVER", centreX, centreY - 85);
+            ctx.font = "bold 20px sans-serif"       //change la police
+            ctx.strokeText("Appuie sur la touche Espace pour rejouer", centreX, centreY + 90);
+            ctx.fillText("Appuie sur la touche Espace pour rejouer", centreX, centreY + 90);
+    
+            ctx.restore();
+        }
+
+        static drawScore(ctx, centreX, centreY, score)       //affiche le score
+        {
+        ctx.save();
+        ctx.font = "bold 80px sans-serif"       //change la police
+        ctx.fillStyle = "#e8be7a";      //change la couleur de la police
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("Score" + " : " + score.toString(), centreX, centreY);     // Centre le text au milieu
+        ctx.restore();
+        }
+
+        static drawSnake(ctx, blockSize, snake)     //méthode dessinant le body du serpent
+        {
+            ctx.save();         //sauvegarde du contexte comme il était avant
+            ctx.fillStyle = "#6f522a";      //Couleur du serpent
+            for (let block of snake.body)       //boucle permettant de passer sur chacun des membres du serpent
+            {
+                this.drawBlock(ctx, block, blockSize);       //dessine un block on donne le ctx et la position du block à dessiner
+            }
+            ctx.restore();      //permet de garder le contexte comme il était avant
+        
+        };   
+
+        static drawBlock(ctx, position, blockSize)       //dessine un block prend contexte et position d'un bloc
+        {
+        const [x,y] = position;
+        //const x = position[0] * blockSize    //position à l'axe horizontal
+        //const y = position[1] * blockSize;        //position à l'axe vertical
+        ctx.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);       //remplissage du rectangle
+        }
+
+        static drawApple(ctx, blockSize, apple)      //méthode pour dessiner 
+        {
+            const radius = blockSize/2;       // r = diametre/2 definition du rayon
+            const x = apple.position[0]*blockSize + radius;        //position du rond par rapport à l'horizontal
+            const y = apple.position[1]*blockSize + radius;        //position du rond par rapport au vertical
+            ctx.save();
+            ctx.fillStyle = "#970c10";      //couleur de la pomme
+            ctx.beginPath();        //il s'agit d'un rond
+            ctx.arc(x,y, radius, 0, Math.PI*2, true);       //dessine le cercle
+            ctx.fill();     //remplis le cercle avec de couleur
+            ctx.restore();      //se souvenir des anciens paramètres dans le contexte
+        };
+
+    }
+
+    class Game
+    {
+        constructor(){
+
+            this.canvasWidth = 900;      //largeur
+            this.canvasHeight = 600;     // hauteur
+            this.blockSize = 25;     //taille des blocks
+            this.canvas = document.createElement('canvas');      //créer l'element html5 permettant de dessiner sur une page html
+            this.ctx = this.canvas.getContext('2d');      //dessine dans le canvas dans le contexte & attrape le contexte pour le mettre dans un nom
+            this.widthInBlocks = this.canvasWidth/this.blockSize;      //divise la largeur en terme de blocks donc 30 blocks
+            this.heightInBlocks = this.canvasHeight/this.blockSize;        //divise la hauteur en terme de blocks donc 20 blocks
+            this.centreX = this.canvasWidth/2;      //pointe vers le milieu horizontale : largeur du canvas %2
+            this.centreY = this.canvasHeight/2;     //pointe vers le milieu verticale : longueur du canvas %2
+            this.delay = 100;        //temps en ms, let car nouvelle assignation plus tard
+            this.snakee;     //let car nouvelle assignation
+            this.applee;
+            this.score;
+            this.timeout;
+        }
+
+        init()
+        {
+            this.canvas.width = this.canvasWidth;     //largeur
+            this.canvas.height = this.canvasHeight;       //hauteur
+            this.canvas.style.border = "30px solid #382a15";     //style du canvas
+            this.canvas.style.margin = "50px auto";
+            this.canvas.style.display = "block";
+            this.canvas.style.background = "url(https://static.vecteezy.com/system/resources/previews/000/147/109/non_2x/palmetto-leaves-background-vector.jpg) no-repeat center ";
+            this.canvas.style.backgroundColor = "#c7914b";
+            document.body.appendChild(this.canvas);      //permet d'accrocher ce tag au body, on l'ajoute au HTML avec cette ligne
+            this.launch();    
+        }
+        
+        launch()      //reinitialise le jeu à 0, on va lancer le jeu
+        {
+            this.snakee = new Snake("right", [6,4], [5,4], [4,4], [3,4], [2,4]);       //fonction constructor crée le body du serpent
+            this.applee = new Apple();        //fonction constructor crée la pomme
+            this.score = 0;
+            this.delay = 100;
+            clearTimeout(this.timeout);      //annule la variable timeout
+            this.refreshCanvas();        //appelle la fonction à la fin de la fonction init
+        } 
+    
+        refreshCanvas()        //gros rectangle dans lequel on va dessiner des choses qu'on rafraichit encore et encore pour donner impression de mouvement
+        {                                 //pour faire bouger le rectangle marron
+            this.snakee.advance();       //fait avancer le serpent
+            if (this.snakee.checkCollision(this.widthInBlocks, this.heightInBlocks)) 
+            {
+                Drawing.gameOver(this.ctx, this.centreX, this.centreY);         //methode static de la class Drawing    
+            }
+            else
+            {
+                if(this.snakee.isEatingApple(this.applee))
+            {
+                this.score++;        //ajoute 1 point quand le serpent a mangé une pomme
+                this.snakee.ateApple = true;
+                do
+                {
+                    this.applee.setNewPosition(this.widthInBlocks, this.heightInBlocks);        //on donne une nouvelle position a la pomme
+                }
+                while(this.applee.isOnSnake(this.snakee))     //on vérifie si position est sur le serpent snakee tant que la nouvelle position sera sur le snakee
+                
+                if(this.score % 5 == 0)
+                {
+                    this.speedUp();      //si score à 5 alors execute la fonction speedup = franchi pallier de 5 points
+                }
+            }
+            this.ctx.clearRect(0,0,this.canvasWidth, this.canvasHeight);       //efface le contenu du canvas
+            Drawing.drawScore(this.ctx, this.centreX, this.centreY, this.score);        //dessine le score
+            Drawing.drawSnake(this.ctx, this.blockSize, this.snakee);      //dessine le serpent
+            Drawing.drawApple(this.ctx, this.blockSize, this.applee);      //dessine la pomme
+            this.timeout = setTimeout(this.refreshCanvas.bind(this), this.delay);     //exécute la fonction à chaque fois que delay de 100ms soit passé pour dessiner plusieurs fois le canvas
+            }                                              //grâce à cette fonction que va se rafraichir le canvas ce qui donne l'impression de mouvement
+        }
+    
+        speedUp()
+        {
+            this.delay /= 2;     //divise le délai par 2 (nouvelle assignation de delay)   
+        }
+        
+    }
+document.onkeydown = (e) =>   //change position en fonction de ce que l'utilisateur à taper sur le clavier 
 {                                                  //on lui donne un nom à la fonction et on va lui donner l'evenement cad que chaque evenement le transmettre à la fonction
     const key = e.keyCode;    //donne le code de la touche qui a été appuyé
     let newDirection;
@@ -279,16 +297,21 @@ document.onkeydown = (e) =>   // change position en fonction de ce que l'utilisa
             newDirection = "down"
             break;
         case 32:
-            launch();
+            myGame.launch();
+            myGame2.launch();
             return;
         default:
             return;
     }
-    snakee.setDirection(newDirection);      //appelle la nouvelle direction
+    myGame.snakee.setDirection(newDirection);      //appelle la nouvelle direction
+    myGame2.snakee.setDirection(newDirection);
 };
 
-init();
-    
+let myGame = new Game();        //on créer le jeu avant de l'initialiser
+myGame.init();                  //init est une méthode de la classe Game
+
+let myGame2 = new Game();        //on créer un 2eme jeu avant de l'initialiser
+myGame2.init();                  //init est une méthode de la classe Game
 }
 
 
@@ -296,6 +319,6 @@ init();
 
 
 
-
+//parametre d'une instance spécifique qui est créer avec la class Game
 
 
