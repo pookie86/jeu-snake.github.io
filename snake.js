@@ -50,7 +50,7 @@ export default class Snake
             default:
                 throw ("Invalid Direction");
         }
-    if(allowedDirections.indexOf(newDirection) > -1)        //si allowedDirection sup ou = à - ca veut dire direction permise
+    if(allowedDirections.includes(newDirection))        //si allowedDirection sup ou = à - ca veut dire direction permise
     {
         this.direction = newDirection; 
     }                             
