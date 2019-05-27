@@ -199,10 +199,10 @@ window.onload = () =>    //se lance lorsque fenêtre s'affiche
 
     class Game
     {
-        constructor(){
+        constructor(canvasWidth = 900, canvasHeight = 600){     //on va pouvoir configurer des jeux avec des tailles différentes ou paramètres par défaut
 
-            this.canvasWidth = 900;      //largeur
-            this.canvasHeight = 600;     // hauteur
+            this.canvasWidth = canvasWidth;      //largeur
+            this.canvasHeight = canvasHeight;     // hauteur
             this.blockSize = 25;     //taille des blocks
             this.canvas = document.createElement('canvas');      //créer l'element html5 permettant de dessiner sur une page html
             this.ctx = this.canvas.getContext('2d');      //dessine dans le canvas dans le contexte & attrape le contexte pour le mettre dans un nom
@@ -304,14 +304,14 @@ document.onkeydown = (e) =>   //change position en fonction de ce que l'utilisat
             return;
     }
     myGame.snakee.setDirection(newDirection);      //appelle la nouvelle direction
-    myGame2.snakee.setDirection(newDirection);
+    //myGame2.snakee.setDirection(newDirection);
 };
 
 let myGame = new Game();        //on créer le jeu avant de l'initialiser
 myGame.init();                  //init est une méthode de la classe Game
 
-let myGame2 = new Game();        //on créer un 2eme jeu avant de l'initialiser
-myGame2.init();                  //init est une méthode de la classe Game
+//let myGame2 = new Game();        //on créer un 2eme jeu avant de l'initialiser
+//myGame2.init();                  //init est une méthode de la classe Game
 }
 
 
@@ -319,6 +319,5 @@ myGame2.init();                  //init est une méthode de la classe Game
 
 
 
-//parametre d'une instance spécifique qui est créer avec la class Game
 
 
