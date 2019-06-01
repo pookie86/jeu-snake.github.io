@@ -29,7 +29,7 @@ export default class Game
         this.canvas.style.border = "30px solid #382a15";     //style du canvas
         this.canvas.style.margin = "50px auto";
         this.canvas.style.display = "block";
-        this.canvas.style.background = "url(https://static.vecteezy.com/system/resources/previews/000/147/109/non_2x/palmetto-leaves-background-vector.jpg) no-repeat center ";
+        this.canvas.style.background = "url(./palmier.jpg) no-repeat center ";
         this.canvas.style.backgroundColor = "#c7914b";
         document.body.appendChild(this.canvas);      //permet d'accrocher ce tag au body, on l'ajoute au HTML avec cette ligne
         this.launch();    
